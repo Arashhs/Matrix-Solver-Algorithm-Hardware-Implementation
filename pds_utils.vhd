@@ -28,6 +28,13 @@ type mem is array(natural range <>, natural range <>) of std_logic_vector;
 
 function getMem (n, m: integer) return mem;
 
+function getProduct (A: mem;
+                    row: integer;
+                    B: mem;
+                    col: integer;
+                    size: integer)
+        return signed;
+
 end package pds_utils;
 
 package body pds_utils is
@@ -35,12 +42,29 @@ package body pds_utils is
 -- Init and return memory for the corresponding matrix n*m
 function getMem (n, m: integer)
         return mem is
-        variable mat : mem(n-1 downto 0, m-1 downto 0);
+        variable mat : mem(1 to n, 1 to m);
 begin
         -- initializing memory
         mat := (others => (others => (others => '0')));   
         return mat;
-end getMem;   
+end getMem;  
+
+function getProduct (A: mem;
+                    row: integer;
+                    B: mem;
+                    col: integer;
+                    size: integer)
+        return signed is
+        variable prod: signed(a(1, 1)'range);
+        
+begin
+        for i in 1 to size loop
+            prod := prod + (signed(A(row, i)) * signed(B(i, col)));
+        end loop;
+        
+        return prod;
+        
+end getProduct; 
         
 
 
