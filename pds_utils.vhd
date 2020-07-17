@@ -23,14 +23,21 @@ package pds_utils is
 constant R_const : integer := 7;
 constant L_const : integer := 13;
 
+constant w: integer := 32;
+constant m: integer := 5;
+constant n: integer := 7;
 
-type mem is array(natural range <>, natural range <>) of std_logic_vector;
 
-function getMem (n, m, w: integer) return mem;
+-- type mem is array(natural range <>, natural range <>) of std_logic_vector;
+type memA is array(1 to n+m, 1 to n+m) of std_logic_vector(w-1 downto 0);
+type memB is array(1 to n+m, 1 to 1) of std_logic_vector(w-1 downto 0);
 
-function getProduct (A: mem;
+function getMemA return memA;
+function getMemB return memB;
+
+function getProduct (A: memA;
                     row: integer;
-                    B: mem;
+                    B: memB;
                     col: integer;
                     size: integer)
         return signed;
@@ -40,28 +47,37 @@ end package pds_utils;
 package body pds_utils is
 
 -- Init and return memory for the corresponding matrix n*m
-function getMem (n, m, w: integer)
-        return mem is
-        variable mat : mem(1 to n, 1 to m)(w-1 downto 0);
+function getMemA 
+        return memA is
+        variable mat : memA;
 begin
         -- initializing memory
         mat := (others => (others => (others => '0')));   
         return mat;
-end getMem;  
+end getMemA;  
 
-function getProduct (A: mem;
+function getMemB
+        return memB is
+        variable mat : memB;
+begin
+        -- initializing memory
+        mat := (others => (others => (others => '0')));   
+        return mat;
+end getMemB; 
+
+function getProduct (A: memA;
                     row: integer;
-                    B: mem;
+                    B: memB;
                     col: integer;
                     size: integer)
         return signed is
-        variable prod: signed(a(1, 1)'high*2 + 1 downto 0);
-        variable res: signed(a(1, 1)'range);      
+        variable prod: signed(w * 2 - 1 downto 0) := (others => '0');
+        variable res: signed(w - 1 downto 0);      
 begin
         for i in 1 to size loop
             prod := prod + (signed(A(row, i)) * signed(B(i, col)));
         end loop;
-        res := prod(a(1, 1)'range);
+        res := prod(w - 1 downto 0);
         
         return res;
         
