@@ -36,9 +36,11 @@ use work.pds_utils.ALL;
 entity module1 is
     generic (n: integer := 7;
             m: integer := 5;
-            w: integer);
-  Port (A, X, B: in mem;
-         F: out mem);
+            w: integer := 32);
+  Port (A: mem(1 to n+m, 1 to n+m)(w-1 downto 0);
+        X: mem(1 to n+m, 1 to 1)(w-1 downto 0);
+        B: in mem(1 to n+m , 1 to 1)(w-1 downto 0);
+         F: out mem(1 to n+m , 1 to 1)(w-1 downto 0));
 end module1;
 
 architecture Behavioral of module1 is
@@ -48,7 +50,7 @@ begin
     process(A, X, B)
     variable product: signed(w-1 downto 0);
     variable p: integer := n + m;
-    variable resMat: mem := getMem(p, 1); -- p*1 matrix
+    variable resMat: mem := getMem(p, 1, w); -- p*1 matrix
     begin
     
         for i in 1 to p loop
