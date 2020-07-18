@@ -132,7 +132,22 @@ process
          wait;
    end process;
 
-
+--Write matrix F to file  
+process
+      file infile          : text open write_mode is "F.output.dat";
+      variable row         : line;
+      variable element     : integer;
+      variable end_of_line : boolean := true;
+      variable i, j: integer := 0;    
+   begin
+        wait for 10ns;
+         for i in 1 to m + n loop
+            element := to_integer(signed(F(i, 1)));
+            write(row, element);
+            writeline(infile, row);
+         end loop;
+         wait;
+   end process;
 
 
 end Behavioral;
