@@ -44,19 +44,19 @@ architecture Behavioral of tb_module1 is
 component module1 is
     generic (n: integer := 7;
             m: integer := 5);
-  port (A: in memA;
-        X: in memB;
-        B: in memB;
-        F: out memB);
+  Port (A: in mem(1 to n+m, 1 to n+m);
+        X: in mem(1 to n+m, 1 to 1);
+        B: in mem(1 to n+m, 1 to 1);
+        F: out mem(1 to n+m, 1 to 1));
 end component;
 
 signal n: integer := 7;
 signal m: integer := 5;
 
-signal A: memA := getMemA;
-signal X: memB := getMemB;
-signal B: memB := getMemB;
-signal F: memB := getMemB;
+signal A: mem(1 to n+m, 1 to n+m) := getMem(n+m, n+m);
+signal X: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
+signal B: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
+signal F: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 
 begin
 m1: module1 port map(A, X, B, F);
@@ -69,7 +69,8 @@ process
       variable row         : line;
       variable element     : integer;
       variable end_of_line : boolean := true;
-      variable i, j: integer := 0;    
+      variable i, j: integer := 0;  
+      variable A_var : mem(1 to n+m, 1 to n+m);  
    begin
          while(not endfile(infile))loop
             i := i + 1;
@@ -78,36 +79,16 @@ process
             j := 0;
             while(end_of_line)loop
                j := j + 1;
-               A(i, j) <= std_logic_vector(to_signed(element, w));
+               A_var(i, j) := std_logic_vector(to_signed(element, w));
                read(row, element, end_of_line); 
             end loop;
             end_of_line := true;
          end loop;
+
+         A <= A_var;
          wait;
    end process;
    
---Read matrix B
-process
-      file infile          : text is in "B.input.dat";
-      variable row         : line;
-      variable element     : integer;
-      variable end_of_line : boolean := true;
-      variable i, j: integer := 0;    
-   begin
-         while(not endfile(infile))loop
-            i := i + 1;
-            readline(infile, row);
-            read(row, element, end_of_line); 
-            j := 0;
-            while(end_of_line)loop
-               j := j + 1;
-               B(i, j) <= std_logic_vector(to_signed(element, w));
-               read(row, element, end_of_line); 
-            end loop;
-            end_of_line := true;
-         end loop;
-         wait;
-   end process;
 
 --Read matrix X   
 process
@@ -124,7 +105,7 @@ process
             j := 0;
             while(end_of_line)loop
                j := j + 1;
-               X(i, j) <= std_logic_vector(to_signed(element, w));
+               X(i,1) <= std_logic_vector(to_signed(element, w));
                read(row, element, end_of_line); 
             end loop;
             end_of_line := true;
@@ -132,6 +113,29 @@ process
          wait;
    end process;
 
+--Read matrix B  
+process
+      file infile          : text is in "B.input.dat";
+      variable row         : line;
+      variable element     : integer;
+      variable end_of_line : boolean := true;
+      variable i, j: integer := 0;    
+   begin
+         while(not endfile(infile))loop
+            i := i + 1;
+            readline(infile, row);
+            read(row, element, end_of_line); 
+            j := 0;
+            while(end_of_line)loop
+               j := j + 1;
+               B(i,1) <= std_logic_vector(to_signed(element, w));
+               read(row, element, end_of_line); 
+            end loop;
+            end_of_line := true;
+         end loop;
+         wait;
+   end process;
+   
 --Write matrix F to file  
 process
       file infile          : text open write_mode is "F.output.dat";
@@ -142,7 +146,7 @@ process
    begin
         wait for 10ns;
          for i in 1 to m + n loop
-            element := to_integer(signed(F(i, 1)));
+            element := to_integer(signed(F(i,1)));
             write(row, element);
             writeline(infile, row);
          end loop;

@@ -36,24 +36,24 @@ use work.pds_utils.ALL;
 entity module1 is
     generic (n: integer := 7;
             m: integer := 5);
-  Port (A: in memA;
-        X: in memB;
-        B: in memB;
-        F: out memB);
+  Port (A: in mem(1 to n+m, 1 to n+m);
+        X: in mem(1 to n+m, 1 to 1);
+        B: in mem(1 to n+m, 1 to 1);
+        F: out mem(1 to n+m, 1 to 1));
 end module1;
 
 architecture Behavioral of module1 is
 
 begin
 
-    process(A, X, B)
+    process(A, X)
     variable product: signed(w-1 downto 0);
     variable p: integer := n + m;
-    variable resMat: memB := getMemB; -- p*1 matrix
+    variable resMat: mem(1 to n+m, 1 to 1) := getMem(n+m, 1); -- p*1 matrix
     begin
-    
+   
         for i in 1 to p loop
-            resMat(i, 1) := std_logic_vector((getProduct(A, i, X, 1, p) - signed(B(i, 1))));
+            resMat(i, 1) := std_logic_vector((getProduct(A, i, X, 1, p) - signed(B(i,1))));
         end loop;
         F <= resMat;
         

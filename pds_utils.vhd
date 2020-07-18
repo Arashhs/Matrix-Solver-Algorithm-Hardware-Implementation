@@ -23,51 +23,30 @@ package pds_utils is
 constant R_const : integer := 7;
 constant L_const : integer := 13;
 
-constant w: integer := 32;
-constant m: integer := 5;
-constant n: integer := 7;
+constant w: integer := 16;
 
+type mem is array(integer range <>, integer range <>) of std_logic_vector(w-1 downto 0);
 
--- type mem is array(natural range <>, natural range <>) of std_logic_vector;
-type memA is array(1 to n+m, 1 to n+m) of std_logic_vector(w-1 downto 0);
-type memB is array(1 to n+m, 1 to 1) of std_logic_vector(w-1 downto 0);
-
-function getMemA return memA;
-function getMemB return memB;
-
-function getProduct (A: memA;
+function getProduct (A: mem;
                     row: integer;
-                    B: memB;
+                    B: mem;
                     col: integer;
                     size: integer)
         return signed;
+        
+function getMem (n,m: integer)
+        return mem;
+        
 
 end package pds_utils;
 
 package body pds_utils is
 
 -- Init and return memory for the corresponding matrix n*m
-function getMemA 
-        return memA is
-        variable mat : memA;
-begin
-        -- initializing memory
-        mat := (others => (others => (others => '0')));   
-        return mat;
-end getMemA;  
 
-function getMemB
-        return memB is
-        variable mat : memB;
-begin
-        -- initializing memory
-        mat := (others => (others => (others => '0')));   
-        return mat;
-end getMemB; 
-
-function getProduct (A: memA;
+function getProduct (A: mem;
                     row: integer;
-                    B: memB;
+                    B: mem;
                     col: integer;
                     size: integer)
         return signed is
@@ -75,14 +54,20 @@ function getProduct (A: memA;
         variable res: signed(w - 1 downto 0);      
 begin
         for i in 1 to size loop
-            prod := prod + (signed(A(row, i)) * signed(B(i, col)));
+            prod := prod + (signed(A(row, i)) * signed(B(i, 1)));
         end loop;
         res := prod(w - 1 downto 0);
+        return res;       
+end getProduct;
+       
         
-        return res;
+function getMem (n,m: integer)
+        return mem is
+        variable res: mem(1 to n, 1 to m) := (others => (others => (others => '0')));  
+begin
+       return res;
         
-end getProduct; 
-        
+end getMem;
 
 
 end package body pds_utils;
