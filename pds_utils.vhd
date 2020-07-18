@@ -34,6 +34,7 @@ function getMem (n,m: integer) return mem;
 function "*" (matA, matB: mem) return mem;
 function "-" (matA, matB: mem) return mem;
 function "+" (matA, matB: mem) return mem;
+function copyMat (matB: mem) return mem;
 
 function readMat (fileName: string; n, m: integer) return mem;
 procedure writeMat (mat: mem; fileName: string);
@@ -157,5 +158,16 @@ procedure writeMat (mat: mem; fileName: string) is
          end loop;
 end writeMat;
 
+function copyMat (matB: mem) return mem is
+	variable res: mem(1 to matB'length, 1 to matB'length(2));
+	begin
+	for i in 1 to matB'length loop
+	   for j in 1 to matB'length(2) loop
+	       res(i, j) := matB(i, j);
+	   end loop;
+    end loop;
+	
+    return res;
+end copyMat;
 
 end package body pds_utils;

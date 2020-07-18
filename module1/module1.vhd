@@ -21,7 +21,9 @@ end module1;
 architecture Behavioral of module1 is
 
 begin
-
-    F <= (A*X) - B;
+    process(A, X, B)
+    begin
+        F <= (A*X) - B;
+    end process;
 
 end Behavioral;
