@@ -61,97 +61,18 @@ signal F: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 begin
 m1: module1 port map(A, X, B, F);
 
-
-	
 -- Read matrix A
-process
-      file infile          : text is in "A.input.dat";
-      variable row         : line;
-      variable element     : integer;
-      variable end_of_line : boolean := true;
-      variable i, j: integer := 0;  
-      variable A_var : mem(1 to n+m, 1 to n+m);  
-   begin
-         while(not endfile(infile))loop
-            i := i + 1;
-            readline(infile, row);
-            read(row, element, end_of_line); 
-            j := 0;
-            while(end_of_line)loop
-               j := j + 1;
-               A_var(i, j) := std_logic_vector(to_signed(element, w));
-               read(row, element, end_of_line); 
-            end loop;
-            end_of_line := true;
-         end loop;
-
-         A <= A_var;
-         wait;
-   end process;
-   
-
+A <= readMat("A.input.dat", n+m, n+m);
 --Read matrix X   
-process
-      file infile          : text is in "X.input.dat";
-      variable row         : line;
-      variable element     : integer;
-      variable end_of_line : boolean := true;
-      variable i, j: integer := 0;    
-   begin
-         while(not endfile(infile))loop
-            i := i + 1;
-            readline(infile, row);
-            read(row, element, end_of_line); 
-            j := 0;
-            while(end_of_line)loop
-               j := j + 1;
-               X(i,1) <= std_logic_vector(to_signed(element, w));
-               read(row, element, end_of_line); 
-            end loop;
-            end_of_line := true;
-         end loop;
-         wait;
-   end process;
-
+X <= readMat("X.input.dat", n+m, 1);
 --Read matrix B  
+B <= readMat("B.input.dat", n+m, 1);
+--Write matrix F to file 
 process
-      file infile          : text is in "B.input.dat";
-      variable row         : line;
-      variable element     : integer;
-      variable end_of_line : boolean := true;
-      variable i, j: integer := 0;    
-   begin
-         while(not endfile(infile))loop
-            i := i + 1;
-            readline(infile, row);
-            read(row, element, end_of_line); 
-            j := 0;
-            while(end_of_line)loop
-               j := j + 1;
-               B(i,1) <= std_logic_vector(to_signed(element, w));
-               read(row, element, end_of_line); 
-            end loop;
-            end_of_line := true;
-         end loop;
-         wait;
-   end process;
-   
---Write matrix F to file  
-process
-      file infile          : text open write_mode is "F.output.dat";
-      variable row         : line;
-      variable element     : integer;
-      variable end_of_line : boolean := true;
-      variable i, j: integer := 0;    
-   begin
-        wait for 10ns;
-         for i in 1 to m + n loop
-            element := to_integer(signed(F(i,1)));
-            write(row, element);
-            writeline(infile, row);
-         end loop;
-         wait;
-   end process;
+begin
+    wait for 5ns;
+    writeMat(F, "F.output.dat");
+end process;
 
 
 end Behavioral;
