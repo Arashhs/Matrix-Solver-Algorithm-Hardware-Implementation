@@ -26,15 +26,18 @@ package pds_utils is
 constant R_const : integer := 7;
 constant L_const : integer := 13;
 constant w: integer := 16;
+constant z: integer := 3;
 
 type mem is array(integer range <>, integer range <>) of std_logic_vector(w-1 downto 0);
 
 function getProduct (A: mem; row: integer; B: mem; col: integer) return signed;   
 function getMem (n,m: integer) return mem;
 function "*" (matA, matB: mem) return mem;
+function dotMul (num: signed; matrix: mem) return mem;
 function "-" (matA, matB: mem) return mem;
 function "+" (matA, matB: mem) return mem;
 function copyMat (matB: mem) return mem;
+function transpose (matA: mem) return mem;
 
 function readMat (fileName: string; n, m: integer) return mem;
 procedure writeMat (mat: mem; fileName: string);
@@ -88,6 +91,20 @@ function "*" (matA, matB: mem) return mem is
 	
     return res;
 end "*";
+
+function dotMul (num: signed; matrix: mem) return mem is
+	variable result: mem(1 to matrix'length, 1 to matrix'length(2));
+	variable tmp: signed(2*w-1 downto 0);
+	begin
+	for i in 1 to matrix'length loop
+	   for j in 1 to matrix'length(2) loop
+	       tmp := num * signed(matrix(i, j));
+	       result(i, j) := std_logic_vector(tmp(w-1 downto 0));
+	   end loop;
+    end loop;
+	
+    return result;
+end dotMul;
 
 function "+" (matA, matB: mem) return mem is
 	variable res: mem(1 to matA'length, 1 to matA'length(2));
@@ -149,9 +166,9 @@ procedure writeMat (mat: mem; fileName: string) is
             for j in 1 to mat'length(2) loop
                 element := to_integer(signed(mat(i,j)));
                 if j > 1 then
-                    write(row, element, right, 5);
+                    write(row, element, right, 7);
                 else
-                    write(row, element, right, 3);
+                    write(row, element, right, 5);
                 end if;    
             end loop;
             writeline(infile, row);
@@ -169,5 +186,17 @@ function copyMat (matB: mem) return mem is
 	
     return res;
 end copyMat;
+
+function transpose (matA: mem) return mem is
+	variable res: mem(1 to matA'length, 1 to matA'length(2));
+	begin
+	for i in 1 to matA'length loop
+	   for j in 1 to matA'length(2) loop
+	       res(i, j) := matA(j, i);
+	   end loop;
+    end loop;
+	
+    return res;
+end transpose;
 
 end package body pds_utils;

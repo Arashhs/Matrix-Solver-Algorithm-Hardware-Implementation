@@ -12,41 +12,36 @@ use work.pds_utils.ALL;
 use std.textio.all;
 use ieee.std_logic_textio.all;
 
-entity tb_module2 is
+entity tb_module3 is
 --  Port ( );
-end tb_module2;
+end tb_module3;
 
-architecture Behavioral of tb_module2 is
+architecture Behavioral of tb_module3 is
 
-component module2 is
+component module3 is
     generic (n: integer := 7;
             m: integer := 5);
-  Port (A: in mem(1 to n+m, 1 to n+m);
-        X: in mem(1 to n+m, 1 to 1);
-        DA: out mem(1 to n+m, 1 to n+m));
+  Port (DA: in mem(1 to n+m, 1 to n+m);
+        G: out mem(1 to n+m, 1 to n+m)
+        );
 end component;
 
 signal n: integer := 7;
 signal m: integer := 5;
-
-signal A: mem(1 to n+m, 1 to n+m) := getMem(n+m, n+m);
-signal X: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 signal DA: mem(1 to n+m, 1 to n+m) := getMem(n+m, n+m);
+signal G: mem(1 to n+m, 1 to n+m) := getMem(n+m, n+m);
 
 begin
-m2: module2 generic map(n, m) port map(A, X, DA);
+m3: module3 generic map(n, m) port map(DA, G);
 
--- Read matrix A
-A <= readMat("A.input.dat", n+m, n+m);
---Read matrix X   
-X <= readMat("X.input.dat", n+m, 1);
+-- Read matrix DA
+DA <= readMat("DA.input.dat", n+m, n+m);
 --Write matrix DA to file 
 process
 begin
     wait for 5ns;
-    writeMat(DA, "DA.output.dat");
+    writeMat(G, "G.output.dat");
 end process;
 
 
 end Behavioral;
-

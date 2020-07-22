@@ -36,7 +36,7 @@ signal B: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 signal F: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 
 begin
-m1: module1 port map(A, X, B, F);
+m1: module1 generic map(n, m) port map(A, X, B, F);
 
 -- Read matrix A
 A <= readMat("A.input.dat", n+m, n+m);
