@@ -48,8 +48,8 @@ component module3 is
         );
 end component;
 
-signal n_gen: integer := 7;
-signal m_gen: integer := 5;
+constant n_gen: integer := 7;
+constant m_gen: integer := 5;
 
 signal F: mem(1 to n_gen+m_gen, 1 to 1) := getMem(n_gen+m_gen, 1);
 signal DA: mem(1 to n_gen+m_gen, 1 to n_gen+m_gen);
