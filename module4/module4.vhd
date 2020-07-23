@@ -81,9 +81,8 @@ process(X)
             tmp4 := tmp1 * tmp3;
             tmp5 := tmp4(w-1 downto 0);
             res(i, i) := std_logic_vector(tmp5);
-            res(i, i) := (others => '0');
         end loop;
-        Anext <= res;  
+        Anext <= res;
     end process;
 
 
