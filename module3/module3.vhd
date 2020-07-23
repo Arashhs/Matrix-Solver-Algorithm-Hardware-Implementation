@@ -24,13 +24,13 @@ begin
 
     
     process(DA)
-    variable diam1, diam2: signed(w-1 downto 0) := (others =>'0');
+    variable diam1, diam2: signed(w-1 downto 0);
     variable s_var, neg_svar, temp: signed(w-1 downto 0);
     variable tmp_term: signed(2*w-1 downto 0);
     variable res: mem(1 to n+m, 1 to n+m);
     begin
-        diam1 := diam1 + 1;
-        diam2 := diam2 + 1;
+        diam1 := to_signed(1, w);
+        diam2 := to_signed(1, w);
         for i in 1 to n+m loop
             tmp_term := diam1 * signed(DA(i, i));
             diam1 := tmp_term(w-1 downto 0);
