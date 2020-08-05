@@ -27,7 +27,7 @@ constant R_const : integer := 2;
 constant L_const : integer := 3;
 constant w: integer := 16;
 constant z: integer := 2;
-constant E: integer := 500;
+constant E: integer := 50;
 
 type mem is array(integer range <>, integer range <>) of std_logic_vector(w-1 downto 0);
 
