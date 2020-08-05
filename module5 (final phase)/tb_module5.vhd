@@ -51,5 +51,39 @@ X <= readMat("X.csv", n+m, 1);
 -- Read matrix B
 B <= readMat("B.csv", n+m, 1);
 
+--Write matrix X to file 
+process(clk)
+variable stage: integer := 0;
+begin
+    if stage < 3 then
+        stage := stage + 1;
+    else if stage >= 3 and stage < 8 and rising_edge(clk) then
+        if stage = 3 then
+            writeMat_new(Xnext, "X.output.dat", stage - 3);
+        else
+            writeMat_append(Xnext, "X.output.dat", stage - 3);
+        end if;
+        stage := stage + 1;
+        end if;
+    end if;
+end process;
+
+--Write matrix G to file 
+process(clk)
+variable stage: integer := 0;
+begin
+    if stage < 3 then
+        stage := stage + 1;
+    else if stage >= 3 and stage < 8 and rising_edge(clk) then
+        if stage = 3 then
+            writeMat_new(G_out, "G.output.dat", stage - 3);
+        else
+            writeMat_append(G_out, "G.output.dat", stage - 3);
+        end if;
+        stage := stage + 1;
+        end if;
+    end if;
+end process;
+
 
 end Behavioral;

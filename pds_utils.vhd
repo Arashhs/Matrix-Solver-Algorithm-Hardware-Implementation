@@ -25,7 +25,7 @@ package pds_utils is
 
 constant R_const : integer := 2;
 constant L_const : integer := 3;
-constant w: integer := 8;
+constant w: integer := 16;
 constant z: integer := 2;
 constant E: integer := 500;
 
@@ -43,6 +43,8 @@ function initA_with_A12 (matA12, X: mem) return mem;
 
 function readMat (fileName: string; n, m: integer) return mem;
 procedure writeMat (mat: mem; fileName: string);
+procedure writeMat_append (mat: mem; fileName: string; stage: integer);
+procedure writeMat_new (mat: mem; fileName: string; stage: integer);
 
 end package pds_utils;
 
@@ -232,5 +234,59 @@ function initA_with_A12 (matA12, X: mem) return mem is
     end loop;
     return res;
 end initA_with_A12;
+
+procedure writeMat_append (mat: mem; fileName: string; stage: integer) is
+      file infile          : text open append_mode is fileName;
+      variable row         : line;
+      variable element     : integer;
+      variable end_of_line : boolean := true;
+      variable i, j: integer := 0; 
+      variable s: string(1 to 7);
+   begin
+    s := "stage: ";
+    write(row, s);
+    write(row, stage);
+    writeline(infile, row);
+         for i in 1 to mat'length loop
+            for j in 1 to mat'length(2) loop
+                element := to_integer(signed(mat(i,j)));
+                if j > 1 then
+                    write(row, element, right, 8);
+                else
+                    write(row, element, right, 6);
+                end if;    
+            end loop;
+            writeline(infile, row);
+         end loop;
+            write(row, lf);
+            writeline(infile, row);
+end writeMat_append;
+
+procedure writeMat_new (mat: mem; fileName: string; stage: integer) is
+      file infile          : text open write_mode is fileName;
+      variable row         : line;
+      variable element     : integer;
+      variable end_of_line : boolean := true;
+      variable i, j: integer := 0; 
+      variable s: string(1 to 7);
+   begin
+    s := "stage: ";
+    write(row, s);
+    write(row, stage);
+    writeline(infile, row);
+         for i in 1 to mat'length loop
+            for j in 1 to mat'length(2) loop
+                element := to_integer(signed(mat(i,j)));
+                if j > 1 then
+                    write(row, element, right, 8);
+                else
+                    write(row, element, right, 6);
+                end if;    
+            end loop;
+            writeline(infile, row);
+         end loop;
+            write(row, lf);
+            writeline(infile, row);
+end writeMat_new;
 
 end package body pds_utils;

@@ -70,7 +70,7 @@ dx <= dX_reg;
 Xn <= X + dX;
 Xnext <= Xn;
 
-process(X)
+process(Xnext)
     variable tmp2, tmp4: signed (2*w - 1 downto 0);
     variable tmp1, tmp3, tmp5: signed(w-1 downto 0);
     variable res: mem(1 to n+m, 1 to n+m);
@@ -78,7 +78,7 @@ process(X)
         res := copyMat(A);
         for i in 1 to n loop
             tmp1 := to_signed(R_const, w);
-            tmp2 := signed(X(i, 1)) * signed(X(i, 1));
+            tmp2 := signed(Xnext(i, 1)) * signed(Xnext(i, 1));
             tmp3 := tmp2(w-1 downto 0);
             tmp4 := tmp1 * tmp3;
             tmp5 := tmp4(w-1 downto 0);
