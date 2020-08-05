@@ -23,10 +23,11 @@ use ieee.std_logic_textio.all;
 
 package pds_utils is
 
-constant R_const : integer := 7;
-constant L_const : integer := 13;
-constant w: integer := 16;
-constant z: integer := 3;
+constant R_const : integer := 2;
+constant L_const : integer := 3;
+constant w: integer := 8;
+constant z: integer := 2;
+constant E: integer := 500;
 
 type mem is array(integer range <>, integer range <>) of std_logic_vector(w-1 downto 0);
 
@@ -38,6 +39,7 @@ function "-" (matA, matB: mem) return mem;
 function "+" (matA, matB: mem) return mem;
 function copyMat (matB: mem) return mem;
 function transpose (matA: mem) return mem;
+function initA_with_A12 (matA12, X: mem) return mem;
 
 function readMat (fileName: string; n, m: integer) return mem;
 procedure writeMat (mat: mem; fileName: string);
@@ -198,5 +200,37 @@ function transpose (matA: mem) return mem is
 	
     return res;
 end transpose;
+
+function initA_with_A12 (matA12, X: mem) return mem is
+    variable n_val, m_val: integer;
+	variable res: mem(1 to matA12'length + matA12'length(2), 1 to matA12'length + matA12'length(2))
+	               := getMem(matA12'length + matA12'length(2), matA12'length + matA12'length(2));
+	variable tmp2, tmp4: signed (2*w - 1 downto 0);
+    variable tmp1, tmp3, tmp5: signed(w-1 downto 0);
+	begin
+	n_val := matA12'length;
+	m_val := matA12'length(2);
+	for i in 1 to n_val loop
+	   for j in n_val + 1 to n_val + m_val loop
+	       res(i, j) := matA12(i, j - n_val);
+	   end loop;
+    end loop;
+    
+    for i in n_val + 1 to n_val + m_val loop
+	   for j in 1 to n_val loop
+	       res(i, j) := matA12(j, i - n_val);
+	   end loop;
+    end loop;
+    
+    for i in 1 to n_val loop
+	   tmp1 := to_signed(R_const, w);
+        tmp2 := signed(X(i, 1)) * signed(X(i, 1));
+        tmp3 := tmp2(w-1 downto 0);
+        tmp4 := tmp1 * tmp3;
+        tmp5 := tmp4(w-1 downto 0);
+        res(i, i) := std_logic_vector(tmp5);
+    end loop;
+    return res;
+end initA_with_A12;
 
 end package body pds_utils;

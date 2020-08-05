@@ -36,7 +36,7 @@ m3: module3 generic map(n, m) port map(DA, G);
 
 -- Read matrix DA
 DA <= readMat("DA.input.dat", n+m, n+m);
---Write matrix DA to file 
+--Write matrix G to file 
 process
 begin
     wait for 5ns;

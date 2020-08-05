@@ -15,6 +15,7 @@ entity module5 is
   Port (A12: in mem(1 to n, 1 to m);
         X: in mem(1 to n+m, 1 to 1);
         B: in mem(1 to n+m, 1 to 1);
+        clk: in std_logic;
         Xnext: out mem(1 to n+m, 1 to 1);
         G_out: out mem(1 to n+m, 1 to n+m)
         );
@@ -30,20 +31,50 @@ component module4 is
         B: in mem(1 to n+m, 1 to 1);
         Xnext: out mem(1 to n+m, 1 to 1);
         G_out: out mem(1 to n+m, 1 to n+m);
-        Anext: out mem(1 to n+m, 1 to n+m)
+        Anext: out mem(1 to n+m, 1 to n+m);
+        dx: out mem(1 to n+m, 1 to 1);
+        F_out: out mem(1 to n+m, 1 to 1) := getMem(n+m, 1)
         );
 end component;
 signal A_reg: mem(1 to n+m, 1 to n+m);
-signal X_reg: mem(1 to n+m, 1 to 1);
+signal X_reg: mem(1 to n+m, 1 to 1) := X;
 signal Xnext_reg: mem(1 to n+m, 1 to 1);
 signal G_reg: mem(1 to n+m, 1 to n+m);
 signal Anext_reg: mem(1 to n+m, 1 to n+m);
+signal dx_reg: mem(1 to n+m, 1 to 1);
+signal F: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
 
 begin
-data_path: module4 generic map (7, 5) port map(A_reg, X_reg, B, Xnext_reg, G_reg, Anext_reg);
-    process(A12)
+data_path: module4 generic map (n, m) port map(A_reg, X_reg, B, Xnext_reg, G_reg, Anext_reg, dx_reg, F);
+
+ 
+
+    process(clk)
+    variable maxdx: signed(w-1 downto 0);
     begin
-        A_reg <= initA_with_A12 (A12);  
-    end process;
+        if(rising_edge(clk)) then
+            maxdx := (others => '0');
+            for i in 1 to n+m loop
+                if abs(signed(dx_reg(i, 1))) > maxdx then
+                    maxdx := abs(signed(dx_reg(i, 1)));
+                else
+                    null;
+                end if;
+            end loop;
+             
+            if maxdx >= to_signed(E, w) and X_reg(1,1)(1) /= 'U' then
+                X_reg <= Xnext_reg; 
+                A_reg <= Anext_reg;
+            else
+                A_reg <= initA_with_A12 (A12, X); 
+                X_reg <= X;
+            end if; 
+            end if;
+            G_out <= G_reg;
+            Xnext <= F;
+            
+         end process;
+    
+
 
 end Behavioral;

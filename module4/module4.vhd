@@ -2,7 +2,7 @@
 --  Student Name: Arash Hajisafi
 --  Student Mail: hajisafiarash@gmail.com
 --  *******************************************************
---  Module: PDS Project : module3
+--  Module: PDS Project : module4
 --  *******************************************************
 
 library IEEE;
@@ -17,7 +17,10 @@ entity module4 is
         X: in mem(1 to n+m, 1 to 1);
         B: in mem(1 to n+m, 1 to 1);
         Xnext: out mem(1 to n+m, 1 to 1);
-        G_out: out mem(1 to n+m, 1 to n+m)
+        G_out: out mem(1 to n+m, 1 to n+m);
+        Anext: out mem(1 to n+m, 1 to n+m);
+        dx: out mem(1 to n+m, 1 to 1);
+        F_out: out mem(1 to n+m, 1 to 1) := getMem(n+m, 1)
         );
 end module4;
 
@@ -48,23 +51,22 @@ component module3 is
         );
 end component;
 
-constant n_gen: integer := 7;
-constant m_gen: integer := 5;
-
-signal F: mem(1 to n_gen+m_gen, 1 to 1) := getMem(n_gen+m_gen, 1);
-signal DA: mem(1 to n_gen+m_gen, 1 to n_gen+m_gen);
-signal G: mem(1 to n_gen+m_gen, 1 to n_gen+m_gen);
-signal dX: mem(1 to n_gen+m_gen, 1 to 1):= getMem(n_gen+m_gen, 1);
-signal Xn: mem(1 to n_gen+m_gen, 1 to 1):= getMem(n_gen+m_gen, 1);
-signal Anext: mem(1 to n_gen+m_gen, 1 to n_gen+m_gen):= getMem(n_gen+m_gen, n_gen+m_gen); 
+signal F: mem(1 to n+m, 1 to 1) := getMem(n+m, 1);
+signal DA: mem(1 to n+m, 1 to n+m);
+signal G: mem(1 to n+m, 1 to n+m);
+signal dX_reg: mem(1 to n+m, 1 to 1):= getMem(n+m, 1);
+signal Xn: mem(1 to n+m, 1 to 1):= getMem(n+m, 1);
+signal Anext_reg: mem(1 to n+m, 1 to n+m):= getMem(n+m, n+m); 
 
 begin
-m1: module1 generic map(n_gen, m_gen) port map(A, X, B, F);
-m2: module2 generic map(n_gen, m_gen) port map(A, X, DA);
-m3: module3 generic map(n_gen, m_gen) port map(DA, G);
+m1: module1 generic map(n, m) port map(A, X, B, F);
+m2: module2 generic map(n, m) port map(A, X, DA);
+m3: module3 generic map(n, m) port map(DA, G);
+F_out <= F;
 
 G_out <= G;
-dX <= G * F;
+dX_reg <= G * F;
+dx <= dX_reg;
 Xn <= X + dX;
 Xnext <= Xn;
 
@@ -82,9 +84,7 @@ process(X)
             tmp5 := tmp4(w-1 downto 0);
             res(i, i) := std_logic_vector(tmp5);
         end loop;
+        Anext_reg <= res;
         Anext <= res;
     end process;
-
-
-
 end Behavioral;

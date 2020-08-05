@@ -2,7 +2,7 @@
 --  Student Name: Arash Hajisafi
 --  Student Mail: hajisafiarash@gmail.com
 --  *******************************************************
---  Module: PDS Project : tb_module2
+--  Module: PDS Project : tb_module4
 --  *******************************************************
 
 library IEEE;
