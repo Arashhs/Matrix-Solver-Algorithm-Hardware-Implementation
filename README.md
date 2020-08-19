@@ -1,6 +1,6 @@
 # Matrix-Solver-Algorithm-Hardware-Implementation
 Implementation of a matrix equation solver algorithm (the following algorithm) in VHDL for the final project of my Design Automation (FPGA) course
-```
+```{math}
 1. let 𝑖 = 0
 2. initialize 𝐴^(0) and 𝑋^(0)
 3. do {
